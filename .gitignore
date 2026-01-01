@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+/build
+/dist
+
+# Production
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+*-debug.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*.js.map
+*.d.ts.map
+
+# Temporary files
+*.tmp
+*.temp
+
+# Firebase Admin SDK (keep this secure!)
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+**/serviceAccountKey.json
+scripts/serviceAccountKey.json
+
+# Exclude other projects and unrelated files
+hari/
+cab-booking-24d21-firebase-adminsdk-*.json
+erp5578-firebase-adminsdk-*.json
+google-services*.json
+commandlinetools-win-*/
+e-commerce-website-build/

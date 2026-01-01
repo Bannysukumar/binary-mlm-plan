@@ -1,0 +1,146 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.role == 'super_admin';
+    }
+    
+    function isCompanyAdmin(companyId) {
+      return isAuthenticated() && 
+             (request.auth.token.role == 'super_admin' ||
+              (request.auth.token.role == 'company_admin' && 
+               request.auth.token.companyId == companyId));
+    }
+    
+    function isUser(companyId) {
+      return isAuthenticated() && 
+             request.auth.token.companyId == companyId;
+    }
+    
+    
+    // Companies collection - Super Admin only for create/delete, Company Admin can update their own
+    match /companies/{companyId} {
+      allow read: if isAuthenticated();
+      allow create, delete: if isSuperAdmin();
+      allow update: if isSuperAdmin() || isCompanyAdmin(companyId);
+      
+      // Company settings
+      match /settings/{document=**} {
+        allow read: if isAuthenticated();
+        allow write: if isCompanyAdmin(companyId);
+      }
+      
+      // MLM Configuration
+      match /mlmConfig/{document=**} {
+        allow read: if isAuthenticated();
+        allow write: if isCompanyAdmin(companyId);
+      }
+      
+      // Users collection
+      match /users/{userId} {
+        // Allow read if: 
+        // - user is reading their own data (by UID match)
+        // - user is reading their team members (downline) - check if document exists first
+        // - is company admin
+        allow read: if isAuthenticated() && 
+                      (request.auth.uid == userId || 
+                       (resource != null && resource.data.sponsorId == request.auth.uid) ||
+                       isCompanyAdmin(companyId));
+        allow create: if isAuthenticated(); // Allow authenticated users to create (for registration)
+        allow update: if isCompanyAdmin(companyId) || 
+                       (isAuthenticated() && request.auth.uid == userId);
+        allow delete: if isSuperAdmin();
+        
+        // User wallet
+        match /wallet/{walletId} {
+          allow read: if isAuthenticated() && 
+                        (request.auth.uid == userId || isCompanyAdmin(companyId));
+          allow write: if false; // Only Cloud Functions can write
+        }
+        
+        // User binary tree
+        match /binaryTree/{treeId} {
+          allow read: if isAuthenticated() && 
+                        (request.auth.uid == userId || isCompanyAdmin(companyId));
+          allow write: if false; // Only Cloud Functions can write
+        }
+        
+        // User settings
+        match /settings/{settingsId} {
+          allow read: if isAuthenticated() && 
+                        (request.auth.uid == userId || isCompanyAdmin(companyId));
+          allow write: if isAuthenticated() && request.auth.uid == userId;
+        }
+      }
+      
+      // Withdrawals
+      match /withdrawals/{withdrawalId} {
+        allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || isCompanyAdmin(companyId));
+        allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
+        allow update: if isCompanyAdmin(companyId);
+      }
+      
+      // Income transactions
+      match /incomeTransactions/{transactionId} {
+        allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || isCompanyAdmin(companyId));
+        allow write: if false; // Only Cloud Functions can write
+      }
+      
+      // Announcements
+      match /announcements/{announcementId} {
+        allow read: if isAuthenticated() && 
+                     (isUser(companyId) || isCompanyAdmin(companyId));
+        allow write: if isCompanyAdmin(companyId);
+      }
+      
+      // Audit logs
+      match /auditLogs/{logId} {
+        allow read: if isCompanyAdmin(companyId);
+        allow write: if false; // Only Cloud Functions can write
+      }
+    }
+    
+    // Platform-wide collections (Super Admin only)
+    match /platform/{document=**} {
+      allow read, write: if isSuperAdmin();
+    }
+    
+    // Subscription Plans (readable by authenticated users, writable by super admin)
+    match /subscriptionPlans/{planId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    
+    // Admins collection (Super Admin only)
+    match /admins/{adminId} {
+      allow read: if isSuperAdmin();
+      allow write: if false; // Only Cloud Functions can write
+    }
+    
+    // Emergency Controls (Super Admin only)
+    match /emergencyControls/{controlId} {
+      allow read, write: if isSuperAdmin();
+    }
+    
+    // Global Audit Logs (Super Admin only)
+    match /globalAuditLogs/{logId} {
+      allow read, write: if isSuperAdmin();
+    }
+    
+    // Billing Events (Company Admin can read their company's events)
+    match /billingEvents/{eventId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only Cloud Functions can write
+    }
+  }
+}

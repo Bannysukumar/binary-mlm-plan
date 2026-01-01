@@ -1,0 +1,206 @@
+/* Modern Card Component Styles */
+.card-modern {
+  @apply bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all duration-200;
+}
+
+.card-modern-lg {
+  @apply bg-card rounded-2xl border border-border shadow-md hover:shadow-lg transition-all duration-200;
+}
+
+.card-modern-elevated {
+  @apply bg-card rounded-xl border border-border shadow-lg hover:shadow-xl transition-all duration-200;
+}
+
+.card-header {
+  @apply flex items-center justify-between p-6 border-b border-border;
+}
+
+.card-body {
+  @apply p-6;
+}
+
+.card-footer {
+  @apply p-6 border-t border-border;
+  background-color: color-mix(in srgb, var(--muted) 30%, transparent);
+}
+
+/* Modern Button Styles */
+.btn-primary {
+  @apply inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-muted text-foreground hover:bg-border font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-muted font-medium transition-all duration-200;
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-sm;
+}
+
+.btn-lg {
+  @apply px-6 py-3 text-base;
+}
+
+/* Modern Badge Styles */
+.badge {
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300;
+}
+
+.badge-warning {
+  @apply bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300;
+}
+
+.badge-error {
+  @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300;
+}
+
+/* Modern Input Styles */
+.input-modern {
+  @apply w-full px-4 py-2.5 rounded-lg border border-input bg-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+}
+
+.input-modern:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Modern Table Styles */
+.table-modern {
+  @apply w-full text-sm;
+}
+
+.table-modern thead {
+  @apply border-b border-border;
+  background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+}
+
+.table-modern th {
+  @apply px-6 py-3 text-left font-semibold text-muted-foreground;
+}
+
+.table-modern td {
+  @apply px-6 py-4 border-b border-border;
+}
+
+.table-modern tbody tr {
+  @apply transition-colors;
+}
+
+.table-modern tbody tr:hover {
+  background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+}
+
+/* Modern Stat Box */
+.stat-box {
+  @apply card-modern p-6 space-y-2;
+}
+
+.stat-label {
+  @apply text-sm font-medium text-muted-foreground;
+}
+
+.stat-value {
+  @apply text-2xl sm:text-3xl font-bold text-foreground;
+}
+
+.stat-change {
+  @apply text-xs font-medium flex items-center gap-1;
+}
+
+.stat-change-positive {
+  @apply text-green-600 dark:text-green-400;
+}
+
+.stat-change-negative {
+  @apply text-red-600 dark:text-red-400;
+}
+
+/* Modern Tab Styles */
+.tab-list {
+  @apply flex gap-2 overflow-x-auto pb-4 border-b border-border;
+}
+
+.tab-btn {
+  @apply flex items-center gap-2 px-4 py-3 rounded-lg whitespace-nowrap font-medium transition-all duration-200 text-muted-foreground hover:text-primary hover:bg-muted;
+}
+
+.tab-btn.active {
+  @apply bg-primary text-primary-foreground;
+}
+
+/* Modern Modal/Dialog Styles */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-40;
+}
+
+.modal-content {
+  @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card rounded-2xl shadow-2xl z-50 max-w-2xl w-full mx-4 max-h-[90vh] overflow-auto;
+}
+
+/* Modern Alert Styles */
+.alert {
+  @apply flex gap-3 p-4 rounded-lg border;
+}
+
+.alert-info {
+  @apply bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300;
+}
+
+.alert-success {
+  @apply bg-green-50 border-green-200 text-green-900 dark:bg-green-900/20 dark:border-green-800 dark:text-green-300;
+}
+
+.alert-warning {
+  @apply bg-yellow-50 border-yellow-200 text-yellow-900 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-300;
+}
+
+.alert-error {
+  @apply bg-red-50 border-red-200 text-red-900 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply bg-muted rounded-lg animate-pulse;
+}
+
+/* Animations */
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
