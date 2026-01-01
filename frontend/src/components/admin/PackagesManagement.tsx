@@ -38,11 +38,20 @@ export function PackagesManagement() {
       const packagesRef = collection(db, "companies", user.companyId, "packages")
       const snapshot = await getDocs(query(packagesRef, orderBy("createdAt", "desc")))
       
-      const packagesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-      })) as Package[]
+      const packagesData = snapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          companyId: data.companyId || user.companyId,
+          name: data.name || "",
+          bv: data.bv || 0,
+          price: data.price || 0,
+          activationRequired: data.activationRequired ?? false,
+          repurchaseEligible: data.repurchaseEligible ?? true,
+          allowUpgrade: data.allowUpgrade ?? true,
+          allowDowngrade: data.allowDowngrade ?? false,
+        } as Package
+      })
 
       setPackages(packagesData)
     } catch (error) {
