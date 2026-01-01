@@ -20,6 +20,7 @@ import {
   Zap,
   Building2,
   FileText,
+  Package,
 } from "lucide-react"
 import Link from "next/link"
 import clsx from "clsx"
@@ -43,6 +44,7 @@ const roleNavigation = {
   company_admin: [
     { label: "Overview", id: "overview", href: "/admin", icon: Home },
     { label: "MLM Config", id: "mlm-config", href: "/admin?tab=mlm-config", icon: Settings },
+    { label: "Packages", id: "packages", href: "/admin?tab=packages", icon: Package },
     { label: "Analytics", id: "analytics", href: "/admin?tab=analytics", icon: BarChart3 },
     { label: "Users", id: "users", href: "/admin?tab=users", icon: Users },
     { label: "Withdrawals", id: "withdrawals", href: "/admin?tab=withdrawals", icon: CreditCard },

@@ -46,16 +46,18 @@ service cloud.firestore {
       // Users collection
       match /users/{userId} {
         // Allow read if: 
-        // - user is reading their own data (by UID match)
+        // - user is reading their own data (by document ID match OR id field match)
         // - user is reading their team members (downline) - check if document exists first
         // - is company admin
         allow read: if isAuthenticated() && 
                       (request.auth.uid == userId || 
+                       (resource != null && resource.data.id == request.auth.uid) ||
                        (resource != null && resource.data.sponsorId == request.auth.uid) ||
                        isCompanyAdmin(companyId));
         allow create: if isAuthenticated(); // Allow authenticated users to create (for registration)
         allow update: if isCompanyAdmin(companyId) || 
-                       (isAuthenticated() && request.auth.uid == userId);
+                       (isAuthenticated() && (request.auth.uid == userId || 
+                        (request.resource != null && request.resource.data.id == request.auth.uid)));
         allow delete: if isSuperAdmin();
         
         // User wallet

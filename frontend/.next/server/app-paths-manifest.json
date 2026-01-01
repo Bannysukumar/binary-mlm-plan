@@ -1,3 +1,6 @@
 {
-  "/super-admin/page": "app/super-admin/page.js"
+  "/user/page": "app/user/page.js",
+  "/super-admin/page": "app/super-admin/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/login/page": "app/login/page.js"
 }

@@ -77,7 +77,43 @@
           "order": "DESCENDING"
         }
       ]
-    }
-  ],
-  "fieldOverrides": []
-}
+    },
+    {
+      "collectionGroup": "subscriptionPlans",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isActive",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "displayOrder",
+          "order": "ASCENDING"
+        },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "collectionGroup": "users",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "sponsorId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "registrationDate",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ]
+      }
+    ],
+    "fieldOverrides": []
+  }

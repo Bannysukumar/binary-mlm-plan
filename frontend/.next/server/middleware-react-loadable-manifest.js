@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST="{\"app\\\\user\\\\page.tsx -> @/lib/firebase-services\":{\"id\":\"app\\\\user\\\\page.tsx -> @/lib/firebase-services\",\"files\":[]}}"

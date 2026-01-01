@@ -5,7 +5,7 @@ import type React from "react"
 import { Suspense, useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createUserWithEmailAndPassword } from "firebase/auth"
-import { collection, addDoc, serverTimestamp, doc, getDoc, query, where, getDocs } from "firebase/firestore"
+import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc, query, where, getDocs } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase"
 import { toast } from "react-hot-toast"
 import Link from "next/link"
@@ -115,7 +115,9 @@ function RegisterContent() {
 
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
 
-      await addDoc(collection(db, `companies/${finalCompanyId}/users`), {
+      // Use user UID as document ID for consistency
+      const userDocRef = doc(db, `companies/${finalCompanyId}/users`, userCredential.user.uid)
+      await setDoc(userDocRef, {
         id: userCredential.user.uid,
         companyId: finalCompanyId,
         email: formData.email,
@@ -126,9 +128,12 @@ function RegisterContent() {
         sponsorId: formData.sponsorId,
         placementId: formData.placementId || formData.sponsorId,
         placementSide: formData.placementSide,
-        isActive: false,
-        isKycVerified: false,
+        status: "pending",
+        kycStatus: "pending",
+        blockedIncome: false,
+        blockedWithdrawals: false,
         packageBV: 0,
+        registrationDate: serverTimestamp(),
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })

@@ -1,1 +1,6 @@
-{}
+{
+  "app\\user\\page.tsx -> @/lib/firebase-services": {
+    "id": "app\\user\\page.tsx -> @/lib/firebase-services",
+    "files": []
+  }
+}

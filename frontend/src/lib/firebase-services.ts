@@ -130,9 +130,23 @@ export const userService = {
 
   async getById(companyId: string, userId: string) {
     const firestore = ensureDb()
+    // Try direct document ID first
     const docRef = doc(firestore, "companies", companyId, "users", userId)
     const docSnap = await getDoc(docRef)
-    return docSnap.exists() ? (docSnap.data() as User) : null
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() } as User
+    }
+    // If not found, try searching by id field
+    const q = query(
+      collection(firestore, "companies", companyId, "users"),
+      where("id", "==", userId)
+    )
+    const snapshot = await getDocs(q)
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0]
+      return { id: doc.id, ...doc.data() } as User
+    }
+    return null
   },
 
   async getByEmail(companyId: string, email: string) {
@@ -153,10 +167,13 @@ export const userService = {
   async listByCompany(companyId: string, filters?: QueryConstraint[]) {
     const firestore = ensureDb()
     const constraints = filters || []
+    // Only add orderBy if we have filters that require it, or if no filters exist
+    // If filters include sponsorId, we need the index for sponsorId + registrationDate
+    const hasSponsorFilter = constraints.some((c: any) => c && c._fieldPath === 'sponsorId')
     const q = query(
       collection(firestore, "companies", companyId, "users"),
       ...constraints,
-      orderBy("registrationDate", "desc"),
+      ...(hasSponsorFilter ? [orderBy("registrationDate", "desc")] : []),
     )
     const snapshot = await getDocs(q)
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as User)
@@ -312,18 +329,25 @@ export const binaryTreeService = {
   // Get team count (left, right, total)
   async getTeamCount(companyId: string, userId: string): Promise<{ total: number; left: number; right: number }> {
     try {
-      const users = await userService.listByCompany(companyId, [where("sponsorId", "==", userId)])
+      const firestore = ensureDb()
+      // Query without orderBy to avoid index requirement - we just need to count
+      const q = query(
+        collection(firestore, "companies", companyId, "users"),
+        where("sponsorId", "==", userId)
+      )
+      const snapshot = await getDocs(q)
       
       let leftCount = 0
       let rightCount = 0
 
-      for (const user of users) {
+      snapshot.docs.forEach((docSnap) => {
+        const user = docSnap.data() as User
         if (user.placementSide === "left") leftCount++
         else if (user.placementSide === "right") rightCount++
-      }
+      })
 
       return {
-        total: users.length,
+        total: snapshot.size,
         left: leftCount,
         right: rightCount,
       }

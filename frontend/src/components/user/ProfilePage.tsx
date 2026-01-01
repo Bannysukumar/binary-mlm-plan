@@ -1,15 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { userService, walletService } from "@/lib/firebase-services"
+import { userService, walletService, binaryTreeService } from "@/lib/firebase-services"
 import { useAuthStore } from "@/store/authStore"
-import type { User, Wallet } from "@/shared/types"
+import type { User, Wallet, BinaryPosition } from "@/shared/types"
 import { toast } from "react-hot-toast"
 
 export function ProfilePage() {
   const { user: authUser } = useAuthStore()
   const [userProfile, setUserProfile] = useState<User | null>(null)
   const [wallet, setWallet] = useState<Wallet | null>(null)
+  const [binaryPosition, setBinaryPosition] = useState<BinaryPosition | null>(null)
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<Partial<User>>({})
@@ -33,6 +34,14 @@ export function ProfilePage() {
 
       const walletData = await walletService.getOrCreate(authUser.companyId, authUser.uid)
       setWallet(walletData)
+
+      // Load binary position
+      try {
+        const position = await binaryTreeService.getBinaryPosition(authUser.companyId, authUser.uid)
+        setBinaryPosition(position)
+      } catch (error) {
+        console.error("[v0] Error loading binary position:", error)
+      }
     } catch (error) {
       console.error("[v0] Error loading profile:", error)
       toast.error("Failed to load profile")
@@ -127,7 +136,28 @@ export function ProfilePage() {
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Package</p>
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">{userProfile.packageId}</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                {userProfile.packageId || "No Package"}
+              </p>
+              {userProfile.packageBV && (
+                <p className="text-sm text-gray-600 dark:text-gray-400">BV: {userProfile.packageBV}</p>
+              )}
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Binary Position</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                {userProfile.placementSide ? (
+                  <span className="capitalize">{userProfile.placementSide} Leg</span>
+                ) : (
+                  "Not Placed"
+                )}
+              </p>
+              {binaryPosition && (
+                <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  <p>Left: {binaryPosition.left ? "Placed" : "Empty"} | Right: {binaryPosition.right ? "Placed" : "Empty"}</p>
+                  <p>Left Vol: {binaryPosition.leftVolume} | Right Vol: {binaryPosition.rightVolume}</p>
+                </div>
+              )}
             </div>
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Joined Date</p>
